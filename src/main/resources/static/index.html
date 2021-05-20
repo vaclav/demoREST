@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customers</title>
+</head>
+<body>
+<h1>Customers</h1>
+<h3>List</h3>
+<a href="/list">List all customers</a>
+<h3>Get</h3>
+<form method="get" action="/find">
+    Identifier: <input type="text" id="idGet" name="id" /><br/>
+    <input type="submit" value="Get"/>
+</form>
+
+<h3>Add</h3>
+<form method="post" action="/add">
+    First: <input type="text" id="first" name="first" /><br/>
+    Last: <input type="text"  id="last" name="last" /> <br/>
+    <input type="submit" value="Add"/>
+</form>
+
+<h3>Delete</h3>
+<form method="post" action="/delete">
+    Identifier: <input type="text" id="idDelete" name="id" /><br/>
+    <input type="submit" value="Delete"/>
+</form>
+</body>
+</html>
