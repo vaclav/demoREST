@@ -12,7 +12,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @SpringBootApplication
-@Controller
+@RestController
 class DemoRestApplication {
 
     private val log: Logger = LoggerFactory.getLogger(DemoRestApplication::class.java)
@@ -44,13 +44,6 @@ class DemoRestApplication {
     @GetMapping("/find")
     fun findCustomerById(@RequestParam id: Long): Customer? {
         return customerRepository!!.findById(id)
-    }
-
-    @GetMapping("/findCustomer/{id}")
-    fun getCustomerDetailById(@PathVariable id: Long, m: Model): String {
-        val c = customerRepository!!.findById(id)
-        m.addAttribute("customer", c)
-        return "customer2"
     }
 
     @PostMapping("/add")
