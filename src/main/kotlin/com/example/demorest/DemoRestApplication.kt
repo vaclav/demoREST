@@ -7,10 +7,12 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @SpringBootApplication
-@RestController
+@Controller
 class DemoRestApplication {
 
     private val log: Logger = LoggerFactory.getLogger(DemoRestApplication::class.java)
@@ -22,6 +24,11 @@ class DemoRestApplication {
     @GetMapping("/hello")
     fun sayHello(@RequestParam(value = "myName", defaultValue = "World") name: String): String {
         return String.format("Hello %s!", name)
+    }
+
+    @GetMapping("/ahoj")
+    fun sayAhoj(@RequestParam(value = "firstName", defaultValue = "World") firstName: String, @RequestParam(value = "lastName", defaultValue = "World") lastName: String): String {
+        return String.format("Hello %s!", firstName) + String.format("Hello %s!", firstName)
     }
 
     @GetMapping("/list")
@@ -38,7 +45,14 @@ class DemoRestApplication {
     fun findCustomerById(@RequestParam id: Long): Customer? {
         return customerRepository!!.findById(id)
     }
-    
+
+    @GetMapping("/findCustomer/{id}")
+    fun getCustomerDetailById(@PathVariable id: Long, m: Model): String {
+        val c = customerRepository!!.findById(id)
+        m.addAttribute("customer", c)
+        return "customer2"
+    }
+
     @PostMapping("/add")
     fun addCustomer(@RequestParam first: String?, @RequestParam last: String?): String? {
         val customer = Customer()
@@ -114,5 +128,5 @@ class DemoRestApplication {
 }
 
 fun main(args: Array<String>) {
-    runApplication<DemoRestApplication>(*args)
+    runApplication<DemoRestApplication>()
 }
