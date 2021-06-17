@@ -7,8 +7,6 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @SpringBootApplication
@@ -19,6 +17,8 @@ class DemoRestApplication {
 
     @Autowired
     val customerRepository: CustomerRepository? = null
+    @Autowired
+    val orderRepository: OrderRepository? = null
 
 
     @GetMapping("/hello")
@@ -39,6 +39,14 @@ class DemoRestApplication {
     @GetMapping("/find/{id}")
     fun getCustomerById(@PathVariable id: Long): Customer? {
         return customerRepository!!.findById(id)
+    }
+
+    @GetMapping("/findOrdersOf/{id}")
+    fun getOrdersOfCustomer(@PathVariable id: Long): String {
+        val c = customerRepository!!.findById(id)
+        if (c==null) return "Sorry, no customer with id = " + id
+        return if (c.orders.isEmpty()) "No orders for customer ${c.firstName} ${c.lastName}"
+                else c.orders.map { "Order num: ${it.orderNum} amount: ${it.price}" }.joinToString(separator = "\n")
     }
 
     @GetMapping("/find")
@@ -84,11 +92,27 @@ class DemoRestApplication {
     }
 
     @Bean
-    fun demo(repository: CustomerRepository): CommandLineRunner? {
+    fun demo(repository: CustomerRepository, orderRepository: OrderRepository): CommandLineRunner? {
         return CommandLineRunner { args ->
             // save a few customers
-            repository.save(Customer("Jack", "Bauer"))
-            repository.save(Customer("Chloe", "O'Brian"))
+            val jack = Customer("Jack", "Bauer")
+            val o1 = Order(jack, 10, 1)
+            val o2 = Order(jack, 20, 2)
+            jack.addOrder(o1)
+            jack.addOrder(o2)
+            repository.save(jack)
+            orderRepository.save(o1)
+            orderRepository.save(o2)
+
+            val chloe = Customer("Chloe", "O'Brian")
+            val o3 = Order(chloe, 30, 3)
+            val o4 = Order(chloe, 40, 4)
+            chloe.addOrder(o3)
+            chloe.addOrder(o4)
+            repository.save(chloe)
+            orderRepository.save(o3)
+            orderRepository.save(o4)
+
             repository.save(Customer("Kim", "Bauer"))
             repository.save(Customer("David", "Palmer"))
             repository.save(Customer("Michelle", "Dessler"))
